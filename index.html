@@ -60,6 +60,8 @@
                 <div class="mt-[-12px] z-20 bg-gray-900 border border-blue-500/30 px-4 py-1 rounded-full shadow-lg backdrop-blur-md">
                     <span id="user-name" class="text-blue-400 font-bold text-xs tracking-wider">@username</span>
                 </div>
+                <button id="btn-mute" onclick="toggleMute()" class="mt-[-0.5] focus:outline-none opacity-80 hover:opacity-100">
+                    </button>
             </div>
 
             <div class="text-center w-full max-w-xs">
@@ -71,6 +73,7 @@
                 <div class="flex justify-between text-[10px] text-gray-400 mt-1 px-1">
                     <span>Lvl: <span id="level-display">1</span></span>
                     <span>Next Grade</span>
+                    
                 </div>
             </div>
 
@@ -83,10 +86,14 @@
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-8 h-8 mb-1"><path fill-rule="evenodd" d="M3 6a3 3 0 013-3h12a3 3 0 013 3v12a3 3 0 01-3 3H6a3 3 0 01-3-3V6zm14.25 6a.75.75 0 01-.22.53l-2.25 2.25a.75.75 0 11-1.06-1.06L15.44 12l-1.72-1.72a.75.75 0 111.06-1.06l2.25 2.25c.141.14.22.331.22.53zm-10.28-.53a.75.75 0 000 1.06l2.25 2.25a.75.75 0 101.06-1.06L8.56 12l1.72-1.72a.75.75 0 10-1.06-1.06l-2.25 2.25z" clip-rule="evenodd" /></svg>
                     <span class="font-bold text-sm">Кодить</span>
                 </button>
-                <button id="btn-sleep" class="bg-amber-700 active:scale-95 transition-transform text-white p-3 rounded-xl shadow-lg border-b-4 border-amber-900 flex flex-col items-center justify-center h-20">
+                 <button id="btn-sleep" class="bg-amber-700 active:scale-95 transition-transform text-white p-3 rounded-xl shadow-lg border-b-4 border-amber-900 flex flex-col items-center justify-center h-20">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-8 h-8 mb-1"><path d="M12.75 3.99c0-1.38-1.68-2.23-2.86-1.41L2.26 8.78A4.5 4.5 0 00.25 12.6V21a1.5 1.5 0 001.5 1.5h12a1.5 1.5 0 001.5-1.5v-8.4c0-1.58-.81-3.07-2.16-3.96L12.75 3.99zM16.5 15a3 3 0 110-6 3 3 0 010 6zM20.25 12h1.5a2.25 2.25 0 012.25 2.25v1.5a2.25 2.25 0 01-2.25 2.25h-1.5V12z" /></svg>
                     <span class="font-bold text-sm">Брейк</span>
+                    <div class="text-xs text-yellow-500 mt-1 font-mono">
+                        $<span id="coffee-price">25</span>
+                    </div>
                 </button>
+
             </div>
 
             <button onclick="hardReset()" class="w-full mt-6 py-2 bg-red-900/50 text-red-400 text-xs rounded-lg border border-red-800 uppercase tracking-widest hover:bg-red-900 transition-colors">
@@ -108,46 +115,69 @@
             </div>
         </div>
 
-        <div id="view-skills" class="view-section hidden w-full h-full p-4 overflow-y-auto pb-24">
-            
+        <div id="view-skills" class="view-section hidden w-full h-full p-4 overflow-y-auto pb-24">     
         </div>
+
+        <div id="view-social" class="view-section hidden w-full h-full p-4 overflow-y-auto pb-24">
+            </div>
 
     </main>
 
-<nav id="main-nav" class=" hidden w-full bg-gray-800 border-t border-gray-700 pb-safe z-50 shrink-0">
-        <div class="grid grid-cols-4 h-16">
-            
-            <button class="nav-btn flex flex-col items-center justify-center text-blue-400 bg-gray-700/50 transition-colors" data-tab="home">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6">
-                    <path d="M11.47 3.84a.75.75 0 011.06 0l8.69 8.69a.75.75 0 101.06-1.06l-8.689-8.69a2.25 2.25 0 00-3.182 0l-8.69 8.69a.75.75 0 001.061 1.06l8.69-8.69z" />
-                    <path d="M12 5.432l8.159 8.159c.03.03.06.058.091.086v6.198c0 1.035-.84 1.875-1.875 1.875H15a.75.75 0 01-.75-.75v-4.5a.75.75 0 00-.75-.75h-3a.75.75 0 00-.75.75V21a.75.75 0 01-.75.75H5.625a1.875 1.875 0 01-1.875-1.875v-6.198a2.29 2.29 0 00.091-.086L12 5.43z" />
-                </svg>
-                <span class="text-[9px] font-medium mt-1">Офис</span>
-            </button>
+<nav id="main-nav" class="fixed bottom-0 w-full bg-gray-900 border-t border-gray-800 flex justify-between px-1 pb-4 pt-2 z-50 hidden">
+        
+        <button data-tab="home" class="nav-btn flex-1 flex flex-col items-center gap-1 text-blue-400 transition-colors">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
+            <span class="text-[10px] font-medium">Офис</span>
+        </button>
 
-            <button class="nav-btn flex flex-col items-center justify-center text-gray-500 hover:text-gray-300 transition-colors" data-tab="skills">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6">
-                    <path fill-rule="evenodd" d="M3 6a3 3 0 013-3h12a3 3 0 013 3v12a3 3 0 01-3 3H6a3 3 0 01-3-3V6zm14.25 6a.75.75 0 01-.22.53l-2.25 2.25a.75.75 0 11-1.06-1.06L15.44 12l-1.72-1.72a.75.75 0 111.06-1.06l2.25 2.25c.141.14.22.331.22.53zm-10.28-.53a.75.75 0 000 1.06l2.25 2.25a.75.75 0 101.06-1.06L8.56 12l1.72-1.72a.75.75 0 10-1.06-1.06l-2.25 2.25z" clip-rule="evenodd" />
-                </svg>
-                <span class="text-[9px] font-medium mt-1">Ветка</span>
-            </button>
+        <button data-tab="skills" class="nav-btn flex-1 flex flex-col items-center gap-1 text-gray-500 transition-colors">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"></path></svg>
+            <span class="text-[10px] font-medium">Навыки</span>
+        </button>
 
-            <button class="nav-btn flex flex-col items-center justify-center text-gray-500 hover:text-gray-300 transition-colors" data-tab="jobs">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6">
-                  <path fill-rule="evenodd" d="M7.5 3.75A1.5 1.5 0 006 5.25v1.5h12v-1.5a1.5 1.5 0 00-1.5-1.5h-9zM4.5 6.75A3 3 0 001.5 9.75v7.5a3 3 0 003 3h15a3 3 0 003-3v-7.5a3 3 0 00-3-3h-15zm1.5 3a1.5 1.5 0 011.5-1.5h9a1.5 1.5 0 011.5 1.5v1.5a1.5 1.5 0 01-1.5 1.5h-9a1.5 1.5 0 01-1.5-1.5v-1.5z" clip-rule="evenodd" />
-                </svg>
-                <span class="text-[9px] font-medium mt-1">Биржа</span>
-            </button>
+        <button data-tab="jobs" class="nav-btn flex-1 flex flex-col items-center gap-1 text-gray-500 transition-colors">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+            <span class="text-[10px] font-medium">Биржа</span>
+        </button>
 
-            <button class="nav-btn flex flex-col items-center justify-center text-gray-500 hover:text-gray-300 transition-colors" data-tab="shop">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6">
-                    <path fill-rule="evenodd" d="M7.5 6v.75H5.513c-.96 0-1.764.724-1.865 1.679l-1.263 12A1.875 1.875 0 004.25 22.5h15.5a1.875 1.875 0 001.865-2.071l-1.263-12a1.875 1.875 0 00-1.865-1.679H16.5V6a4.5 4.5 0 10-9 0zM12 3a3 3 0 00-3 3v.75h6V6a3 3 0 00-3-3zm-3 8.25a3 3 0 106 0v-.75a.75.75 0 011.5 0v.75a4.5 4.5 0 11-9 0v-.75a.75.75 0 011.5 0v.75z" clip-rule="evenodd" />
-                </svg>
-                <span class="text-[9px] font-medium mt-1">Шоп</span>
-            </button>
+        <button data-tab="shop" class="nav-btn flex-1 flex flex-col items-center gap-1 text-gray-500 transition-colors">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+            <span class="text-[10px] font-medium">Шоп</span>
+        </button>
 
-        </div>
+        <button data-tab="social" class="nav-btn flex-1 flex flex-col items-center gap-1 text-gray-500 transition-colors">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+            <span class="text-[10px] font-medium">Топ</span>
+        </button>
+
     </nav>
+    <div id="modal-event" class="hidden fixed inset-0 z-[100] flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 transition-all duration-300 opacity-0">
+        <div class="bg-gray-800 w-full max-w-sm rounded-2xl border border-gray-600 shadow-2xl transform scale-90 transition-all duration-300 relative overflow-hidden" id="modal-content">
+            
+            <div id="modal-header-bar" class="h-2 w-full bg-blue-500"></div>
+
+            <div class="p-6 text-center">
+                <div id="modal-icon" class="text-6xl mb-4 select-none">
+                    🎁
+                </div>
+                
+                <h3 id="modal-title" class="text-2xl font-bold text-white mb-2">
+                    Событие!
+                </h3>
+                
+                <p id="modal-desc" class="text-gray-300 text-sm mb-6 leading-relaxed">
+                    Описание...
+                </p>
+
+                <button onclick="closeEventModal()" class="w-full py-3 bg-gray-700 hover:bg-gray-600 text-white font-bold rounded-xl transition-all active:scale-95 uppercase tracking-wider shadow-lg">
+                    Понятно
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div id="toast-container" class="fixed top-16 right-4 z-[90] flex flex-col items-end pointer-events-none">
+    </div>
 
 
     <script src="js/state.js"></script>
@@ -157,5 +187,8 @@
     <script src="js/main.js"></script>
     <script src="js/shop.js"></script>
     <script src="js/jobs.js"></script>
+    <script src="js/events.js"></script>
+    <script src="js/social.js"></script>
+    <script src="js/audio.js"></script>
 </body>
 </html>

@@ -1,10 +1,15 @@
-const GAME_VERSION = "v0.2 (Alpha)"; 
+const GAME_VERSION = "v0.3 (Social Update)"; 
 // --- CONFIG & CONSTANTS ---
 const CONFIG = {
     baseLineRate: 1,      
-    energyCost: 10,       
+    energyCost: 12,       
     coffeeRestore: 25,    
-    coffeePrice: 15,      
+
+
+    coffeeBasePrice: 25,
+    coffeePriceGrowth: 15,
+    coffeeMetabolism: 0.05,
+    burnoutDuration: 10000,      
     levelThreshold: 100   
 };
 
@@ -36,7 +41,11 @@ let state = {
     rank: "Junior",
     specialization: null,
     critChance: 0,      
-    critMultiplier: 1,  
+    critMultiplier: 1,
+    
+    coffeeConsumption: 0,
+    isBurnout: false,
+    
     maxEnergy: 100,     
     energyRegen: 0,    
     ownedSkills: [], 

@@ -67,11 +67,13 @@ function renderShop() {
 
 // Покупка предмета
 function buyItem(itemId) {
+    playSound('money'); // <--- При успешной покупке
     const item = SHOP_ITEMS.find(i => i.id === itemId);
     
     if (!item || state.inventory.includes(itemId)) return;
 
     if (state.money < item.price) {
+        playSound('error');
         tg.HapticFeedback.notificationOccurred('error');
         log('Недостаточно средств!', 'error');
         return;

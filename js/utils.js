@@ -1,14 +1,44 @@
 // --- DOM ELEMENTS CACHE ---
 const els = {}; 
 
-// --- LOGGER ---
-function log(text, type = 'neutral') {
-    if (!els.console) return;
-    const time = new Date().toLocaleTimeString('ru-RU', { hour: '2-digit', minute:'2-digit' });
-    let colorClass = type === 'error' ? 'text-red-400' : (type === 'success' ? 'text-green-400' : 'text-gray-300');
+// --- TOAST NOTIFICATIONS (Visual Polish) ---
+
+
+function showToast(message, type = 'neutral') {
+    const container = document.getElementById('toast-container');
     
-    els.console.innerHTML += `<div class="mb-1"><span class="opacity-50">[${time}]</span> <span class="${colorClass}">${text}</span></div>`;
-    els.console.scrollTop = els.console.scrollHeight;
+
+    const toast = document.createElement('div');
+
+    let colors = 'bg-gray-800 border-gray-600 text-white';
+    if (type === 'success') colors = 'bg-green-900/90 border-green-600 text-green-100';
+    if (type === 'error') colors = 'bg-red-900/90 border-red-600 text-red-100';
+    if (type === 'warning') colors = 'bg-yellow-900/90 border-yellow-600 text-yellow-100';
+
+    toast.className = `transform translate-x-full transition-all duration-300 ease-out mb-2 p-3 rounded-xl border shadow-lg text-xs font-bold flex items-center gap-2 ${colors}`;
+    toast.innerHTML = message;
+
+
+    container.appendChild(toast);
+
+
+    setTimeout(() => {
+        toast.classList.remove('translate-x-full');
+    }, 10);
+
+
+    setTimeout(() => {
+        toast.classList.add('translate-x-full', 'opacity-0');
+        setTimeout(() => toast.remove(), 300);
+    }, 3000);
+}
+
+// Перенаправляем старый log на showToast, чтобы не переписывать весь код
+function log(msg, type) {
+    // В консоль тоже пишем для отладки
+    console.log(`[${type}] ${msg}`);
+    // И показываем тост
+    showToast(msg, type);
 }
 
 // --- FLOATING TEXT ---
@@ -111,6 +141,7 @@ function calculateLevel() {
     const newLevel = Math.max(1, Math.floor(Math.sqrt(state.lines / 100)));
     
     if (newLevel > state.level) {
+        playSound('level');
         state.level = newLevel;
         
         tg.HapticFeedback.notificationOccurred('success');
@@ -125,7 +156,7 @@ function calculateLevel() {
 
 function hardReset() {
     if (confirm("Вы уверены? Весь прогресс будет удален безвозвратно.")) {
-        // 1. Создаем пустой "чистый" стейт
+
         const cleanState = {
             money: 0,
             lines: 0,
@@ -139,17 +170,60 @@ function hardReset() {
             maxEnergy: 100,
             critChance: 0,
             critMultiplier: 1,
-            user: state.user // Оставляем только имя/аватар
+            user: state.user 
         };
 
-        // 2. ПРИНУДИТЕЛЬНО сохраняем эту пустышку поверх старых данных
+
         localStorage.setItem('coderSim_v1', JSON.stringify(cleanState));
 
-        // 3. Отключаем автосейв в этом сеансе (чтобы он не перебил наши нули)
-        // (Это грязный хак: мы просто подменяем глобальную функцию saveGame на пустышку)
+
         window.saveGame = function() { console.log('Save blocked due to reset'); };
 
-        // 4. Перезагружаем
+
         location.reload();
     }
+}
+
+
+// ---- BURNOUT SYSTEM (v0.3 b1)
+
+function triggerBurnout() {
+    if (state.isBurnout) return;
+
+
+    state.isBurnout = true;
+    state.energy = 0;
+
+    document.body.classList.add('grayscale', 'pointer-events-none');
+
+    tg.HapticFeedback.notificationOccurred('error');
+
+
+    showFloat(`🤯 ВЫГОРАНИЕ!`, window.innerWidth/2, window.innerHeight/2, 'text-red-500 text-4xl font-bold');
+    log('ВЫГОРАНИЕ! Система перегружена. Отдых 10 сек.', 'error');
+
+
+    setTimeout(() => {
+        state.isBurnout = false;
+        state.energy = 30;
+
+
+        document.body.classList.remove('grayscale', 'pointer-events-none');
+
+
+        tg.HapticFeedback.notificationOccurred('success');
+        log('Выгорание прошло. Можно работать.', 'success');
+
+        updateUI();
+    }, CONFIG.burnoutDuration);
+}
+
+function metabolizeCoffee() {
+    if (state.coffeeConsumption > 0) {
+        state.coffeeConsumption = Math.max(0, state.coffeeConsumption - CONFIG.coffeeMetabolism);
+    }
+}
+
+function getCurrentCoffeePrice() {
+    return Math.floor(CONFIG.coffeeBasePrice + (state.coffeeConsumption * CONFIG.coffeePriceGrowth));
 }

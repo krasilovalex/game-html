@@ -1,10 +1,12 @@
 // --- SKILL SYSTEM ---
 
 function buySkill(skillId) {
+    playSound('money'); // <--- При успешной покупке
     const classSkills = SKILLS_DB[state.specialization];
     const skill = classSkills.find(s => s.id === skillId);
 
     if (state.level < (skill.reqLevel || 1)) {
+        playSound('error');
         tg.HapticFeedback.notificationOccurred('error');
         log(`Нужен уровень ${skill.reqLevel}!`, 'error');
         return;
@@ -13,6 +15,7 @@ function buySkill(skillId) {
     if (!skill || state.ownedSkills.includes(skillId)) return;
 
     if (state.money < skill.price) {
+        playSound('error');
         tg.HapticFeedback.notificationOccurred('error');
         log(`Не хватает денег! Нужно $${skill.price}`, 'error');
         return;
