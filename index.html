@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scaleble=no">
+    <title>Dev Life: TMA v0.1</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+
+    <style>
+        body {
+            -webkit-user-select: none;
+            user-select: none;
+            overscroll-behavior: none;
+
+            background-color: var(--tg-theme-bg-color, #111827);
+        }
+    </style>
+</head>
+<body class="h-screen flex flex-col font-mono text-gray-100 overflow-hidden relative">
+
+    <div id="version-display" class="absolute top-2 right-3 text-[10px] text-gray-600 font-mono font-bold z-50 pointer-events-none opacity-50">
+        v0.0
+    </div>
+    <header class="w-full p-4 bg-gray-800 border-b border-gray-700 flex justify-between items-center shrink-0 z-10">
+
+
+        <div class="flex flex-col items-center w-1/3">
+            <span class="text-xs text-gray-400 uppercase tracking-wider">Деньги</span>
+            <div class="text-lg font-bold text-green-400">
+                $<span id="money-display" class="">0</span>
+            </div>
+            <div class="text-[10px] text-gray-500 font-mono mt-1">
+                <span id="income-display">+0</span>$/сек
+            </div>
+        </div>
+
+        <div class="flex flex-col items-center w-1/3">
+            <span class="text-xs text-gray-400 uppercase tracking-wider">Строки</span>
+            <div class="text-lg font-bold text-blue-400">
+                <span id="lines-display" class="">0</span>
+            </div>
+        </div>
+
+        <div class="flex flex-col items-center w-1/3">
+            <span class="text-xs text-gray-400 uppercase tracking-wider">Энергия</span>
+            <div class="text-lg font-bold text-yellow-400">
+                <span id="energy-display" class="">0</span>
+            </div>
+        </div>
+    </header>
+
+<main class="flex-grow flex flex-col relative w-full overflow-hidden">
+
+        <div id="view-home" class="view-section w-full h-full flex flex-col items-center justify-center p-4 space-y-6 overflow-y-auto">
+            
+            <div class="relative group flex flex-col items-center z-0">
+                <img id="user-avatar" src="https://placehold.co/200x200/374151/ffffff?text=TG" alt="User Avatar" class="w-32 h-32 rounded-full object-cover border-4 border-gray-700 shadow-[0_0_30px_rgba(59,130,246,0.4)] z-10">
+                <div class="mt-[-12px] z-20 bg-gray-900 border border-blue-500/30 px-4 py-1 rounded-full shadow-lg backdrop-blur-md">
+                    <span id="user-name" class="text-blue-400 font-bold text-xs tracking-wider">@username</span>
+                </div>
+            </div>
+
+            <div class="text-center w-full max-w-xs">
+                <h2 class="text-2xl font-extrabold text-white leading-none" id="rank-display">Junior</h2>
+                <p class="text-sm text-blue-300 font-semibold mt-1 mb-3 tracking-wide" id="specialization-display">Не определился</p>
+                <div class="w-full h-4 bg-gray-700/80 rounded-full overflow-hidden border border-gray-600 backdrop-blur">
+                    <div id="xp-bar" class="h-full bg-gradient-to-r from-blue-600 via-cyan-500 to-teal-400 w-0 transition-all duration-500"></div>
+                </div>
+                <div class="flex justify-between text-[10px] text-gray-400 mt-1 px-1">
+                    <span>Lvl: <span id="level-display">1</span></span>
+                    <span>Next Grade</span>
+                </div>
+            </div>
+
+            <div id="console-log" class="w-full max-w-sm h-28 bg-gray-900/80 backdrop-blur-md rounded-xl p-3 text-[11px] text-green-400/90 font-mono leading-snug overflow-y-auto border border-gray-700/50 shadow-inner scrollbar-hide">
+                <span class="text-gray-500">></span> System initialized.<br>
+            </div>
+
+            <div class="w-full grid grid-cols-2 gap-4 mt-auto">
+                <button id="btn-code" class="relative group bg-blue-600 active:scale-95 transition-transform text-white p-3 rounded-xl shadow-lg border-b-4 border-blue-800 flex flex-col items-center justify-center h-20">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-8 h-8 mb-1"><path fill-rule="evenodd" d="M3 6a3 3 0 013-3h12a3 3 0 013 3v12a3 3 0 01-3 3H6a3 3 0 01-3-3V6zm14.25 6a.75.75 0 01-.22.53l-2.25 2.25a.75.75 0 11-1.06-1.06L15.44 12l-1.72-1.72a.75.75 0 111.06-1.06l2.25 2.25c.141.14.22.331.22.53zm-10.28-.53a.75.75 0 000 1.06l2.25 2.25a.75.75 0 101.06-1.06L8.56 12l1.72-1.72a.75.75 0 10-1.06-1.06l-2.25 2.25z" clip-rule="evenodd" /></svg>
+                    <span class="font-bold text-sm">Кодить</span>
+                </button>
+                <button id="btn-sleep" class="bg-amber-700 active:scale-95 transition-transform text-white p-3 rounded-xl shadow-lg border-b-4 border-amber-900 flex flex-col items-center justify-center h-20">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-8 h-8 mb-1"><path d="M12.75 3.99c0-1.38-1.68-2.23-2.86-1.41L2.26 8.78A4.5 4.5 0 00.25 12.6V21a1.5 1.5 0 001.5 1.5h12a1.5 1.5 0 001.5-1.5v-8.4c0-1.58-.81-3.07-2.16-3.96L12.75 3.99zM16.5 15a3 3 0 110-6 3 3 0 010 6zM20.25 12h1.5a2.25 2.25 0 012.25 2.25v1.5a2.25 2.25 0 01-2.25 2.25h-1.5V12z" /></svg>
+                    <span class="font-bold text-sm">Брейк</span>
+                </button>
+            </div>
+
+            <button onclick="hardReset()" class="w-full mt-6 py-2 bg-red-900/50 text-red-400 text-xs rounded-lg border border-red-800 uppercase tracking-widest hover:bg-red-900 transition-colors">
+                🛑 Сброс прогресса (Dev Only)
+            </button>
+        </div>
+
+        <div id="view-shop" class="view-section hidden w-full h-full p-4 overflow-y-auto">
+            <h2 class="text-2xl font-bold mb-4">Магазин 🛒</h2>
+            <p class="text-gray-400">Скоро здесь будут апгрейды...</p>
+        </div>
+
+        <div id="view-jobs" class="view-section hidden w-full h-full p-4 overflow-y-auto pb-24">
+            <h2 class="text-2xl font-bold mb-4 text-white">Биржа фриланса 💼</h2>
+            <div class="flex flex-col items-center justify-center h-64 text-center">
+                <svg class="w-16 h-16 text-gray-600 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                <p class="text-gray-400">Ожидание заказов...</p>
+                <p class="text-xs text-gray-500 mt-2">AI-генератор заказов подключается</p>
+            </div>
+        </div>
+
+        <div id="view-skills" class="view-section hidden w-full h-full p-4 overflow-y-auto pb-24">
+            
+        </div>
+
+    </main>
+
+<nav id="main-nav" class=" hidden w-full bg-gray-800 border-t border-gray-700 pb-safe z-50 shrink-0">
+        <div class="grid grid-cols-4 h-16">
+            
+            <button class="nav-btn flex flex-col items-center justify-center text-blue-400 bg-gray-700/50 transition-colors" data-tab="home">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6">
+                    <path d="M11.47 3.84a.75.75 0 011.06 0l8.69 8.69a.75.75 0 101.06-1.06l-8.689-8.69a2.25 2.25 0 00-3.182 0l-8.69 8.69a.75.75 0 001.061 1.06l8.69-8.69z" />
+                    <path d="M12 5.432l8.159 8.159c.03.03.06.058.091.086v6.198c0 1.035-.84 1.875-1.875 1.875H15a.75.75 0 01-.75-.75v-4.5a.75.75 0 00-.75-.75h-3a.75.75 0 00-.75.75V21a.75.75 0 01-.75.75H5.625a1.875 1.875 0 01-1.875-1.875v-6.198a2.29 2.29 0 00.091-.086L12 5.43z" />
+                </svg>
+                <span class="text-[9px] font-medium mt-1">Офис</span>
+            </button>
+
+            <button class="nav-btn flex flex-col items-center justify-center text-gray-500 hover:text-gray-300 transition-colors" data-tab="skills">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6">
+                    <path fill-rule="evenodd" d="M3 6a3 3 0 013-3h12a3 3 0 013 3v12a3 3 0 01-3 3H6a3 3 0 01-3-3V6zm14.25 6a.75.75 0 01-.22.53l-2.25 2.25a.75.75 0 11-1.06-1.06L15.44 12l-1.72-1.72a.75.75 0 111.06-1.06l2.25 2.25c.141.14.22.331.22.53zm-10.28-.53a.75.75 0 000 1.06l2.25 2.25a.75.75 0 101.06-1.06L8.56 12l1.72-1.72a.75.75 0 10-1.06-1.06l-2.25 2.25z" clip-rule="evenodd" />
+                </svg>
+                <span class="text-[9px] font-medium mt-1">Ветка</span>
+            </button>
+
+            <button class="nav-btn flex flex-col items-center justify-center text-gray-500 hover:text-gray-300 transition-colors" data-tab="jobs">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6">
+                  <path fill-rule="evenodd" d="M7.5 3.75A1.5 1.5 0 006 5.25v1.5h12v-1.5a1.5 1.5 0 00-1.5-1.5h-9zM4.5 6.75A3 3 0 001.5 9.75v7.5a3 3 0 003 3h15a3 3 0 003-3v-7.5a3 3 0 00-3-3h-15zm1.5 3a1.5 1.5 0 011.5-1.5h9a1.5 1.5 0 011.5 1.5v1.5a1.5 1.5 0 01-1.5 1.5h-9a1.5 1.5 0 01-1.5-1.5v-1.5z" clip-rule="evenodd" />
+                </svg>
+                <span class="text-[9px] font-medium mt-1">Биржа</span>
+            </button>
+
+            <button class="nav-btn flex flex-col items-center justify-center text-gray-500 hover:text-gray-300 transition-colors" data-tab="shop">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6">
+                    <path fill-rule="evenodd" d="M7.5 6v.75H5.513c-.96 0-1.764.724-1.865 1.679l-1.263 12A1.875 1.875 0 004.25 22.5h15.5a1.875 1.875 0 001.865-2.071l-1.263-12a1.875 1.875 0 00-1.865-1.679H16.5V6a4.5 4.5 0 10-9 0zM12 3a3 3 0 00-3 3v.75h6V6a3 3 0 00-3-3zm-3 8.25a3 3 0 106 0v-.75a.75.75 0 011.5 0v.75a4.5 4.5 0 11-9 0v-.75a.75.75 0 011.5 0v.75z" clip-rule="evenodd" />
+                </svg>
+                <span class="text-[9px] font-medium mt-1">Шоп</span>
+            </button>
+
+        </div>
+    </nav>
+
+
+    <script src="js/state.js"></script>
+    <script src="js/utils.js"></script>
+    <script src="js/data.js"></script>
+    <script src="js/skills.js"></script>
+    <script src="js/main.js"></script>
+    <script src="js/shop.js"></script>
+    <script src="js/jobs.js"></script>
+</body>
+</html>
